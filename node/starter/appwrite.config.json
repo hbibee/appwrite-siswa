@@ -1,0 +1,100 @@
+{
+    "organizationId": "6a96bdfe0005fb223f2e",
+    "projectId": "6a96dce0002d07ff0f7e",
+    "projectName": "Coba coba",
+    "endpoint": "https://sgp.cloud.appwrite.io/v1",
+
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "protocols": {
+            "rest": true,
+            "graphql": true,
+            "websocket": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": null,
+                "sessionsLimit": 10,
+                "passwordHistory": null,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
+    },
+
+    "functions": [
+        {
+            "$id": "6a97e3240020613b31d3",
+            "name": "Users to siswa",
+            "runtime": "node-26",
+            "path": "functions/users-to-siswa",
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "events": [
+                "databases.6a97a74400128c858a56.tables.users.rows.*.create"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "ignore": [
+                "node_modules",
+                ".git"
+            ],
+            "scopes": [
+                "databases.read",
+                "databases.write",
+                "tables.read",
+                "tables.write",
+                "columns.read",
+                "columns.write",
+                "indexes.read",
+                "indexes.write",
+                "rows.read",
+                "rows.write",
+                "embeddings.write",
+                "documentsdb.read",
+                "documentsdb.write",
+                "documentsdb.collections.read",
+                "documentsdb.collections.write",
+                "documentsdb.documents.read",
+                "documentsdb.documents.write",
+                "documentsdb.indexes.read",
+                "documentsdb.indexes.write",
+                "vectorsdb.read",
+                "vectorsdb.write",
+                "vectorsdb.collections.read",
+                "vectorsdb.collections.write",
+                "vectorsdb.documents.read",
+                "vectorsdb.documents.write",
+                "vectorsdb.indexes.read",
+                "vectorsdb.indexes.write"
+            ]
+        }
+    ]
+}

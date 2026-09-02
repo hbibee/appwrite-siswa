@@ -1,35 +1,53 @@
-import { Client, Users } from 'node-appwrite';
+import { Client, Databases, ID } from "node-appwrite";
 
-// This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
-  // You can use the Appwrite SDK to interact with other services
-  // For this example, we're using the Users service
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
-    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(req.headers['x-appwrite-key'] ?? '');
-  const users = new Users(client);
-
   try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
-  }
+    log("=== FUNCTION USER TO SISWA STARTED ===");
 
-  // The req object contains the request data
-  if (req.path === "/ping") {
-    // Use res object to respond with text(), json(), or binary()
-    // Don't forget to return a response!
-    return res.text("Pong");
-  }
+    // 1. Ambil payload dari trigger event (SDK v20+)
+    let user = req.bodyJson;
+    
+    // Fallback jika bodyJson berupa string
+    if (typeof user === "string") {
+      user = JSON.parse(user);
+    } else if (!user && req.bodyText) {
+      user = JSON.parse(req.bodyText);
+    }
 
-  return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
-  });
+    log(`Proses User ID: ${user.$id}`);
+    log(`User Name: ${user.name}`);
+
+    // 2. Inisialisasi Appwrite Client
+    const client = new Client()
+      .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
+      .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+      .setKey(process.env.APPWRITE_API_KEY);
+
+    const databases = new Databases(client);
+
+    // 3. Buat baris baru di tabel/collection 'siswa'
+    const siswa = await databases.createDocument(
+      "6a97a74400128c858a56", // Database ID
+      "siswa",                 // Table / Collection ID
+      ID.unique(),            // Document ID unik
+      {
+        name: user.name || "Siswa Baru", // Mengisi kolom name di tabel siswa
+      }
+    );
+
+    log(`BERHASIL: Siswa dibuat dengan ID ${siswa.$id}`);
+
+    return res.json({
+      success: true,
+      siswaId: siswa.$id,
+    });
+
+  } catch (err) {
+    error(`GAGAL: ${err.message}`);
+
+    return res.json({
+      success: false,
+      error: err.message,
+    }, 500);
+  }
 };
